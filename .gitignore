@@ -1,0 +1,25 @@
+# Java
+/target/
+/classes/
+/.settings/
+/.classpath
+/.project
+
+# Maven
+.mvn/
+!.mvn/wrapper/maven-wrapper.jar
+
+# VS Code
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+~$*
