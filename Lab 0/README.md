@@ -92,20 +92,82 @@ src/
 - `UserValidator` class: Only handles user data validation
 - `UserRepository` class: Only handles user data storage
 
+**Code Example:**
+
+```java
+// User.java - ONLY responsible for holding user data
+public class User {
+    private String name;
+    private String email;
+    private int age;
+
+    public User(String name, String email, int age) {
+        this.name = name;
+        this.email = email;
+        this.age = age;
+    }
+
+    public String getName() { return name; }
+    public String getEmail() { return email; }
+    public int getAge() { return age; }
+}
+
+// UserValidator.java - ONLY responsible for validation logic
+public class UserValidator {
+    public boolean isValid(User user) {
+        return isNameValid(user.getName()) && 
+               isEmailValid(user.getEmail()) && 
+               isAgeValid(user.getAge());
+    }
+    
+    private boolean isNameValid(String name) {
+        return name != null && !name.trim().isEmpty() && name.length() >= 2;
+    }
+    
+    private boolean isEmailValid(String email) {
+        return email != null && email.contains("@") && email.contains(".");
+    }
+    
+    private boolean isAgeValid(int age) {
+        return age > 0 && age < 150;
+    }
+}
+
+// UserRepository.java - ONLY responsible for data storage
+public class UserRepository {
+    private List<User> users = new ArrayList<>();
+    
+    public boolean save(User user) {
+        if (user != null) {
+            users.add(user);
+            return true;
+        }
+        return false;
+    }
+    
+    public User findByEmail(String email) {
+        return users.stream()
+                   .filter(user -> user.getEmail().equals(email))
+                   .findFirst()
+                   .orElse(null);
+    }
+}
+```
+
 **Benefits:**
 
 - Easy to maintain and modify
 - Clear separation of concerns
 - Reduced coupling between functionalities
+- Each class has exactly one reason to change
 
 **Example Output:**
 
 ```
 
- SRP test passed - Each class has a single, well-defined responsibility!
+ SRP test passed - Each class has a single, well-defined responsibility!
 
 ```
-
 ---
 ### 2. Open/Closed Principle (OCP)
 
@@ -118,20 +180,90 @@ src/
 - `Rectangle`, `Circle`, `Triangle`: Extensions without modifying existing code
 - `AreaCalculator`: Works with any shape without modification
 
+**Code Example:**
+
+```java
+// Shape.java - Abstract base class (CLOSED for modification)
+public abstract class Shape {
+    public abstract double calculateArea();
+    public abstract String getShapeName();
+}
+
+// Circle.java - EXTENDS Shape without modifying it (OPEN for extension)
+public class Circle extends Shape {
+    private double radius;
+    
+    public Circle(double radius) {
+        this.radius = radius;
+    }
+    
+    @Override
+    public double calculateArea() {
+        return Math.PI * radius * radius;
+    }
+    
+    @Override
+    public String getShapeName() {
+        return "Circle";
+    }
+}
+
+// Rectangle.java - Another extension (adding new shapes is easy!)
+public class Rectangle extends Shape {
+    private double width;
+    private double height;
+    
+    public Rectangle(double width, double height) {
+        this.width = width;
+        this.height = height;
+    }
+    
+    @Override
+    public double calculateArea() {
+        return width * height;
+    }
+    
+    @Override
+    public String getShapeName() {
+        return "Rectangle";
+    }
+}
+
+// AreaCalculator.java - Works with ANY shape without modification
+public class AreaCalculator {
+    public double calculateTotalArea(List<Shape> shapes) {
+        double totalArea = 0.0;
+        for (Shape shape : shapes) {
+            totalArea += shape.calculateArea(); // Polymorphism!
+        }
+        return totalArea;
+    }
+}
+
+// Usage Example - Adding new shapes doesn't require changing AreaCalculator!
+List<Shape> shapes = Arrays.asList(
+    new Circle(5.0),
+    new Rectangle(4.0, 6.0),
+    new Triangle(3.0, 4.0)  // New shape - no changes to existing code!
+);
+AreaCalculator calculator = new AreaCalculator();
+double total = calculator.calculateTotalArea(shapes);
+```
+
 **Benefits:**
 
 - Can add new functionality without changing existing code
 - Reduces risk of breaking existing features
 - Promotes code reusability
+- Extensible architecture
 
 **Example Output:**
 
 ```
 
- OCP test passed - Added new shapes without modifying AreaCalculator!
+ OCP test passed - Added new shapes without modifying AreaCalculator!
 
 ```
-
 ---
 ### 3. Liskov Substitution Principle (LSP)
 
@@ -145,20 +277,190 @@ src/
 - `Penguin`: Non-flying bird that doesn't implement `Flyable`
 - `BirdKeeper`: Works with any bird type correctly
 
+**Code Example:**
+
+```java
+// Bird.java - Base class with behaviors ALL birds have
+public abstract class Bird {
+    protected String name;
+    protected String species;
+    
+    public Bird(String name, String species) {
+        this.name = name;
+        this.species = species;
+    }
+    
+    // All birds can eat and sleep
+    public void eat() {
+        System.out.println(name + " is eating.");
+    }
+
+    public void sleep() {
+        System.out.println(name + " is sleeping.");
+    }
+    
+    public abstract void makeSound();
+    
+    public String getName() { return name; }
+}
+
+// Flyable.java - Separate interface for flying behavior
+public interface Flyable {
+    void fly();
+    int getMaxAltitude();
+    double getFlyingSpeed();
+}
+
+// Eagle.java - Flying bird (implements Flyable)
+public class Eagle extends Bird implements Flyable {
+    public Eagle(String name) {
+        super(name, "Eagle");
+    }
+    
+    @Override
+    public void makeSound() {
+        System.out.println(name + " screeches: 'Screech!'");
+    }
+    
+    @Override
+    public void fly() {
+        System.out.println(name + " soars majestically through the sky!");
+    }
+    
+    @Override
+    public int getMaxAltitude() {
+        return 6000; // Eagles can fly up to 6000 meters
+    }
+    
+    @Override
+    public double getFlyingSpeed() {
+        return 80.0; // Eagles fly at 80 km/h
+    }
+}
+
+// Sparrow.java - Another flying bird (also implements Flyable)
+public class Sparrow extends Bird implements Flyable {
+    public Sparrow(String name) {
+        super(name, "Sparrow");
+    }
+    
+    @Override
+    public void makeSound() {
+        System.out.println(name + " chirps: 'Tweet tweet!'");
+    }
+    
+    @Override
+    public void fly() {
+        System.out.println(name + " flutters quickly from branch to branch!");
+    }
+    
+    @Override
+    public int getMaxAltitude() {
+        return 100; // Sparrows fly at lower altitudes
+    }
+    
+    @Override
+    public double getFlyingSpeed() {
+        return 24.0; // Sparrows fly at about 24 km/h
+    }
+}
+
+// Penguin.java - Non-flying bird (does NOT implement Flyable)
+public class Penguin extends Bird {
+    public Penguin(String name) {
+        super(name, "Penguin");
+    }
+    
+    @Override
+    public void makeSound() {
+        System.out.println(name + " calls: 'Honk honk!'");
+    }
+    
+    // Penguins have their own special abilities
+    public void swim() {
+        System.out.println(name + " swims gracefully underwater!");
+    }
+    
+    public void slide() {
+        System.out.println(name + " slides on its belly across the ice!");
+    }
+}
+
+// BirdKeeper.java - Works correctly with ALL birds
+public class BirdKeeper {
+    // All birds can be cared for (uses base Bird class)
+    public void careForBird(Bird bird) {
+        System.out.println("=== Caring for " + bird + " ===");
+        bird.eat();
+        bird.makeSound();
+        bird.sleep();
+    }
+    
+    // Only flying birds can perform flight (uses Flyable interface)
+    public void makeBirdFly(Flyable flyableBird) {
+        if (flyableBird instanceof Bird) {
+            Bird bird = (Bird) flyableBird;
+            System.out.println("=== Flight session for " + bird + " ===");
+        }
+        flyableBird.fly();
+        System.out.println("Flying at " + flyableBird.getFlyingSpeed() + " km/h");
+        System.out.println("Max altitude: " + flyableBird.getMaxAltitude() + " meters");
+    }
+    
+    // Feeds all birds - works with mixed collection of Bird subclasses
+    public void feedAllBirds(List<Bird> birds) {
+        System.out.println("=== Feeding time for all birds ===");
+        for (Bird bird : birds) {
+            System.out.println("Feeding " + bird);
+            bird.eat();
+        }
+        System.out.println("All birds have been fed!");
+    }
+}
+
+// Usage Example - Perfect substitutability!
+BirdKeeper keeper = new BirdKeeper();
+
+// Create different bird instances
+Bird eagle = new Eagle("Eddie");
+Bird sparrow = new Sparrow("Sally");
+Bird penguin = new Penguin("Penny");
+
+// LSP in action: All birds can be cared for identically
+keeper.careForBird(eagle);    // ✓ Works!
+keeper.careForBird(sparrow);  // ✓ Works!
+keeper.careForBird(penguin);  // ✓ Works!
+
+// Feed all birds together (mixed collection)
+List<Bird> allBirds = Arrays.asList(eagle, sparrow, penguin);
+keeper.feedAllBirds(allBirds);  // ✓ All work perfectly!
+
+// Only flying birds can fly (type safety)
+if (eagle instanceof Flyable) {
+    keeper.makeBirdFly((Flyable) eagle);    // ✓ Works! Eddie soars!
+}
+if (sparrow instanceof Flyable) {
+    keeper.makeBirdFly((Flyable) sparrow);  // ✓ Works! Sally flutters!
+}
+// Penguin doesn't implement Flyable - no contract violation!
+// This is CORRECT LSP implementation
+
+```
+
 **Benefits:**
 
 - Ensures proper inheritance relationships
 - Enables true polymorphism
 - Prevents contract violations
+- Subclasses can be used interchangeably with their base class
 
 **Example Output:**
 
 ```
 
- LSP test passed - All Bird subclasses are perfectly substitutable!
+ LSP test passed - All Bird subclasses are perfectly substitutable!
 
 ```
- 
 ---
 ##  Test Results
 
