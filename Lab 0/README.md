@@ -1,8 +1,12 @@
+# Lab 0 - SOLID Principles Demonstration
 
-**Course:** Tehnici si Metode de Proiectare Software  
+**Course:** Tehnici si Metode de Proiectare Software 
+
 **Student:** Caraman Mihai
-**Group:** FAF 233
-**Date:** October 2025
+
+**Group:** FAF 233 
+
+**Date:** October 2025 
 
 ##  Project Overview
 
