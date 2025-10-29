@@ -14,11 +14,6 @@ public class UserRepository {
         this.users = new ArrayList<>();
     }
     
-    /**
-     * Saves a user to the repository
-     * @param user the user to save
-     * @return true if saved successfully
-     */
     public boolean save(User user) {
         if (user != null) {
             users.add(user);
@@ -27,11 +22,7 @@ public class UserRepository {
         return false;
     }
     
-    /**
-     * Finds a user by email
-     * @param email the email to search for
-     * @return the user if found, null otherwise
-     */
+
     public User findByEmail(String email) {
         return users.stream()
                    .filter(user -> user.getEmail().equals(email))
@@ -39,25 +30,16 @@ public class UserRepository {
                    .orElse(null);
     }
     
-    /**
-     * Gets all users
-     * @return list of all users
-     */
     public List<User> findAll() {
         return new ArrayList<>(users);
     }
     
-    /**
-     * Gets the count of stored users
-     * @return number of users in repository
-     */
+    
     public int getUserCount() {
         return users.size();
     }
     
-    /**
-     * Removes all users from repository
-     */
+
     public void clear() {
         users.clear();
     }

@@ -22,7 +22,6 @@ public abstract class Shape {
     public abstract double calculateArea();
     
     /**
-     * Abstract method for shape identification
      * @return the name of the shape
      */
     public abstract String getShapeName();

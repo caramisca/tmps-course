@@ -25,7 +25,6 @@ public class User {
         this.age = age;
     }
 
-    // Getters and setters - still part of data representation responsibility
     public String getName() { return name; }
     public String getEmail() { return email; }
     public int getAge() { return age; }
