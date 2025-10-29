@@ -9,7 +9,7 @@ package md.utm.tmps.lab1.domain.models;
  * This prevents ID conflicts and ensures proper order tracking across the system.
  */
 public class OrderIdGenerator {
-    // Single instance - volatile ensures visibility across threads
+    // Single instance - **volatile** ensures visibility across threads
     private static volatile OrderIdGenerator instance;
     
     // Counter for generating unique IDs
@@ -24,6 +24,7 @@ public class OrderIdGenerator {
      * Double-checked locking for thread-safe lazy initialization
      * @return the single instance of OrderIdGenerator
      */
+    // synchronized - prevents race conditions, lets only one thread access at a time
     public static OrderIdGenerator getInstance() {
         if (instance == null) {
             synchronized (OrderIdGenerator.class) {
