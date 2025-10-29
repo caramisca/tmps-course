@@ -16,6 +16,10 @@ This project demonstrates the first three SOLID principles through practical Jav
 2. **Open/Closed Principle (OCP)**
 3. **Liskov Substitution Principle (LSP)**
 
+Additionally, this README includes example notes for the remaining two SOLID principles:
+4. **Interface Segregation Principle (ISP)**
+5. **Dependency Inversion Principle (DIP)**
+
 Each principle is implemented in a separate package with clear examples, comprehensive tests, and detailed documentation.
 ##  Project Structure
 
@@ -462,6 +466,179 @@ if (sparrow instanceof Flyable) {
 
 ```
 ---
+### 4. Interface Segregation Principle (ISP)
+
+> [!definition]
+> "Clients should not be forced to depend on interfaces they do not use."
+
+**Implementation:**
+
+- Split large, "fat" interfaces into focused, role-specific ones
+- Clients depend only on the capabilities they actually use
+- Classes can implement exactly the interfaces that match their behavior
+
+**Code Example:**
+
+```java
+// Focused interfaces instead of one fat Machine interface
+public interface Printer {
+    void print(String content);
+}
+
+public interface Scanner {
+    String scan();
+}
+
+public interface Fax {
+    void fax(String number, String content);
+}
+
+// Simple devices implement only what they support
+public class SimplePrinter implements Printer {
+    @Override
+    public void print(String content) {
+        System.out.println("Printing: " + content);
+    }
+}
+
+public class SimpleScanner implements Scanner {
+    @Override
+    public String scan() {
+        System.out.println("Scanning a document...");
+        return "scanned-content";
+    }
+}
+
+// Multifunction device implements multiple small interfaces
+public class MultiFunctionPrinter implements Printer, Scanner, Fax {
+    @Override
+    public void print(String content) {
+        System.out.println("MFP printing: " + content);
+    }
+
+    @Override
+    public String scan() {
+        System.out.println("MFP scanning...");
+        return "mfp-scan";
+    }
+
+    @Override
+    public void fax(String number, String content) {
+        System.out.println("Faxing to " + number + ": " + content);
+    }
+}
+
+// Client depends only on what it needs (Printer and Scanner here)
+public class OfficeDesk {
+    private final Printer printer;
+    private final Scanner scanner;
+
+    public OfficeDesk(Printer printer, Scanner scanner) {
+        this.printer = printer;
+        this.scanner = scanner;
+    }
+
+    public void copy(String title) {
+        String scanned = scanner.scan();
+        printer.print(title + " -> " + scanned);
+    }
+}
+
+// Usage: compose capabilities without unused methods
+Printer p = new SimplePrinter();
+Scanner s = new SimpleScanner();
+OfficeDesk desk = new OfficeDesk(p, s);
+desk.copy("Report");
+```
+
+**Benefits:**
+
+- Avoids empty or throwing method implementations
+- Reduces coupling and increases flexibility
+- Easier testing by mocking only the needed interfaces
+- Clearer contracts per capability
+
+**Example Output:**
+
+```
+Scanning a document...
+Printing: Report -> scanned-content
+```
+---
+### 5. Dependency Inversion Principle (DIP)
+
+> [!definition]
+> "High-level modules should not depend on low-level modules. Both should depend on abstractions. Abstractions should not depend on details. Details should depend on abstractions."
+
+**Implementation:**
+
+- Define stable abstractions (interfaces) for volatile details
+- High-level policy depends on abstractions, not concrete classes
+- Inject dependencies (constructor injection shown below)
+
+**Code Example:**
+
+```java
+// Abstraction
+public interface MessageSender {
+    void send(String to, String message);
+}
+
+// Low-level details depend on the abstraction
+public class EmailSender implements MessageSender {
+    @Override
+    public void send(String to, String message) {
+        System.out.println("[EMAIL] to=" + to + ", msg=" + message);
+    }
+}
+
+public class SmsSender implements MessageSender {
+    @Override
+    public void send(String to, String message) {
+        System.out.println("[SMS] to=" + to + ", msg=" + message);
+    }
+}
+
+// High-level module depends only on MessageSender abstraction
+public class NotificationService {
+    private final MessageSender sender;
+
+    // Constructor injection
+    public NotificationService(MessageSender sender) {
+        this.sender = sender;
+    }
+
+    public void notifyUser(String user, String message) {
+        sender.send(user, message);
+    }
+}
+
+// Usage: easily swap implementations without changing high-level logic
+NotificationService emailNotif = new NotificationService(new EmailSender());
+emailNotif.notifyUser("student@utm.md", "Exam tomorrow at 9:00");
+
+NotificationService smsNotif = new NotificationService(new SmsSender());
+smsNotif.notifyUser("+37360000000", "Room changed to 301");
+```
+
+**Benefits:**
+
+- High-level business logic is isolated from infrastructure changes
+- Easy to substitute or add new transports (Email, SMS, Push, etc.)
+- Improved testability (inject fakes/mocks)
+- Encourages clean architecture boundaries
+
+**Example Output:**
+
+```
+[EMAIL] to=student@utm.md, msg=Exam tomorrow at 9:00
+[SMS] to=+37360000000, msg=Room changed to 301
+```
+---
+
+
+
+
 ##  Test Results
 
 The project includes comprehensive JUnit 5 tests that verify each principle:

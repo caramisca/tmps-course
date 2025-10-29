@@ -26,23 +26,14 @@ public abstract class Bird {
         this.species = species;
     }
     
-    /**
-     * All birds can eat - this is safe for LSP
-     */
     public void eat() {
         System.out.println(name + " is eating.");
     }
-    
-    /**
-     * All birds can sleep - this is safe for LSP
-     */
+
     public void sleep() {
         System.out.println(name + " is sleeping.");
     }
     
-    /**
-     * All birds can make sounds - this is safe for LSP
-     */
     public abstract void makeSound();
     
     // Getters

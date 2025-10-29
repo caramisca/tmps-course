@@ -9,12 +9,6 @@ import java.util.List;
  */
 public class AreaCalculator {
     
-    /**
-     * Calculates total area of all shapes
-     * This method doesn't need to change when we add new shape types
-     * @param shapes list of shapes to calculate total area for
-     * @return total area of all shapes
-     */
     public double calculateTotalArea(List<Shape> shapes) {
         double totalArea = 0.0;
         for (Shape shape : shapes) {
@@ -23,12 +17,7 @@ public class AreaCalculator {
         return totalArea;
     }
     
-    /**
-     * Generates a report of all shapes and their areas
-     * This method also doesn't need to change for new shapes
-     * @param shapes list of shapes to report on
-     * @return formatted string report
-     */
+
     public String generateAreaReport(List<Shape> shapes) {
         StringBuilder report = new StringBuilder();
         report.append("=== AREA CALCULATION REPORT ===\n");
