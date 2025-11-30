@@ -25,6 +25,6 @@ public class BaconDecorator extends ToppingDecorator {
     @Override
     public void prepare() {
         pizza.prepare();
-        System.out.println("  → Adding crispy bacon strips (+$2.50)");
+        System.out.println("   Adding crispy bacon strips (+$2.50)");
     }
 }

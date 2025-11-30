@@ -8,9 +8,9 @@ public class StripeAPI {
     
     public boolean charge(String cardToken, int amountInCents) {
         // Simulate Stripe payment processing
-        System.out.println("  → Stripe: Initializing Stripe SDK...");
-        System.out.println("  → Stripe: Charging $" + String.format("%.2f", amountInCents / 100.0) + " to card token: " + cardToken);
-        System.out.println("  → Stripe: Transaction approved");
+        System.out.println("   Stripe: Initializing Stripe SDK...");
+        System.out.println("   Stripe: Charging $" + String.format("%.2f", amountInCents / 100.0) + " to card token: " + cardToken);
+        System.out.println("   Stripe: Transaction approved");
         return true;
     }
     

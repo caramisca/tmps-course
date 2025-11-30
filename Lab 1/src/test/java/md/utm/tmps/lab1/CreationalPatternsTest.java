@@ -42,7 +42,7 @@ public class CreationalPatternsTest {
         assertTrue(id2 > id1, "IDs should be incrementing");
         assertEquals(id1 + 1, id2, "IDs should increment by 1");
         
-        System.out.println("✓ Singleton test passed - Single instance manages all order IDs!");
+        System.out.println(" Singleton test passed - Single instance manages all order IDs!");
     }
     
     @Test
@@ -81,7 +81,7 @@ public class CreationalPatternsTest {
         assertEquals(2, complexPizza.getExtraToppings().size());
         assertTrue(complexPizza.getExtraToppings().contains("Pineapple"));
         
-        System.out.println("✓ Builder test passed - Pizzas built with flexible configuration!");
+        System.out.println(" Builder test passed - Pizzas built with flexible configuration!");
     }
     
     @Test
@@ -117,7 +117,7 @@ public class CreationalPatternsTest {
             BeverageFactory.createBeverage("soda", "Medium", "Cola");
         });
         
-        System.out.println("✓ Factory Method test passed - Beverages created without exposing logic!");
+        System.out.println(" Factory Method test passed - Beverages created without exposing logic!");
     }
     
     @Test
@@ -154,7 +154,7 @@ public class CreationalPatternsTest {
         assertNotNull(italianMeal.getPizza());
         assertNotNull(italianMeal.getBeverage());
         
-        System.out.println("✓ Abstract Factory test passed - Meal families created consistently!");
+        System.out.println(" Abstract Factory test passed - Meal families created consistently!");
     }
     
     @Test
@@ -190,7 +190,7 @@ public class CreationalPatternsTest {
         double total = order.calculateTotal();
         assertTrue(total > 0, "Order total should be positive");
         
-        System.out.println("✓ Integration test passed - All patterns work together seamlessly!");
+        System.out.println(" Integration test passed - All patterns work together seamlessly!");
     }
     
     @Test
@@ -220,6 +220,6 @@ public class CreationalPatternsTest {
                     "All threads should get the same singleton instance");
         }
         
-        System.out.println("✓ Thread safety test passed - Singleton is thread-safe!");
+        System.out.println(" Thread safety test passed - Singleton is thread-safe!");
     }
 }

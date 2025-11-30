@@ -46,17 +46,17 @@ public class Main {
         OrderIdGenerator generator1 = OrderIdGenerator.getInstance();
         OrderIdGenerator generator2 = OrderIdGenerator.getInstance();
         
-        System.out.println("✓ Getting OrderIdGenerator instances...");
+        System.out.println(" Getting OrderIdGenerator instances...");
         System.out.println("  Instance 1: " + generator1);
         System.out.println("  Instance 2: " + generator2);
         System.out.println("  Same instance? " + (generator1 == generator2));
         
-        System.out.println("\n✓ Generating unique order IDs:");
+        System.out.println("\n Generating unique order IDs:");
         System.out.println("  Order ID 1: " + generator1.generateOrderId());
         System.out.println("  Order ID 2: " + generator2.generateOrderId());
         System.out.println("  Order ID 3: " + generator1.generateOrderId());
         
-        System.out.println("\n✓ Singleton ensures no ID conflicts across the system!");
+        System.out.println("\n Singleton ensures no ID conflicts across the system!");
     }
     
     private static void demonstrateBuilder() {
@@ -70,7 +70,7 @@ public class Main {
                 .cheese(true)
                 .build();
         
-        System.out.println("✓ Simple Margherita Pizza:");
+        System.out.println(" Simple Margherita Pizza:");
         System.out.println("  " + margherita);
         
         // Build a complex pizza with many toppings
@@ -85,10 +85,10 @@ public class Main {
                 .addExtraTopping("Pineapple")
                 .build();
         
-        System.out.println("\n✓ Supreme Pizza with custom toppings:");
+        System.out.println("\n Supreme Pizza with custom toppings:");
         System.out.println("  " + supremePizza);
         
-        System.out.println("\n✓ Builder pattern avoids constructor pollution!");
+        System.out.println("\n Builder pattern avoids constructor pollution!");
         System.out.println("  (No need for Pizza(size, crust, cheese, pepperoni, ...))");
     }
     
@@ -103,17 +103,17 @@ public class Main {
         Beverage greenTea = BeverageFactory.createTea("Medium", "Green");
         Beverage orangeJuice = BeverageFactory.createJuice("Large", "Orange");
         
-        System.out.println("✓ Created beverages using Factory Method:");
+        System.out.println(" Created beverages using Factory Method:");
         System.out.println("  " + espresso);
         System.out.println("  " + greenTea);
         System.out.println("  " + orangeJuice);
         
-        System.out.println("\n✓ Preparing beverages:");
+        System.out.println("\n Preparing beverages:");
         espresso.prepare();
         System.out.println();
         greenTea.prepare();
         
-        System.out.println("\n✓ Factory encapsulates object creation logic!");
+        System.out.println("\n Factory encapsulates object creation logic!");
     }
     
     private static void demonstrateAbstractFactory() {
@@ -131,19 +131,19 @@ public class Main {
         Meal meatMeal = meatLoversFactory.createMeal();
         Meal italianMeal = italianFactory.createMeal();
         
-        System.out.println("✓ Vegetarian Meal:");
+        System.out.println(" Vegetarian Meal:");
         System.out.println("  " + vegMeal.getPizza());
         System.out.println("  " + vegMeal.getBeverage());
         
-        System.out.println("\n✓ Meat Lovers Meal:");
+        System.out.println("\n Meat Lovers Meal:");
         System.out.println("  " + meatMeal.getPizza());
         System.out.println("  " + meatMeal.getBeverage());
         
-        System.out.println("\n✓ Italian Classic Meal:");
+        System.out.println("\n Italian Classic Meal:");
         System.out.println("  " + italianMeal.getPizza());
         System.out.println("  " + italianMeal.getBeverage());
         
-        System.out.println("\n✓ Abstract Factory creates coordinated product families!");
+        System.out.println("\n Abstract Factory creates coordinated product families!");
     }
     
     private static void demonstrateCompleteOrder() {
@@ -175,6 +175,6 @@ public class Main {
         System.out.println(order1);
         System.out.println("\n" + order2);
         
-        System.out.println("\n✓ All creational patterns working together seamlessly!");
+        System.out.println("\n All creational patterns working together seamlessly!");
     }
 }

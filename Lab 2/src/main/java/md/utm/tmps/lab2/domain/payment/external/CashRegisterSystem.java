@@ -9,17 +9,17 @@ public class CashRegisterSystem {
     
     public boolean acceptCash(double amount, double cashReceived) {
         // Simulate cash payment processing
-        System.out.println("  → Cash Register: Payment amount: $" + String.format("%.2f", amount));
-        System.out.println("  → Cash Register: Cash received: $" + String.format("%.2f", cashReceived));
+        System.out.println("   Cash Register: Payment amount: $" + String.format("%.2f", amount));
+        System.out.println("   Cash Register: Cash received: $" + String.format("%.2f", cashReceived));
         
         if (cashReceived >= amount) {
             double change = cashReceived - amount;
             cashDrawer += amount;
-            System.out.println("  → Cash Register: Change due: $" + String.format("%.2f", change));
-            System.out.println("  → Cash Register: Transaction complete");
+            System.out.println("   Cash Register: Change due: $" + String.format("%.2f", change));
+            System.out.println("   Cash Register: Transaction complete");
             return true;
         } else {
-            System.out.println("  → Cash Register: Insufficient cash received");
+            System.out.println("   Cash Register: Insufficient cash received");
             return false;
         }
     }

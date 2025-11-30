@@ -27,6 +27,6 @@ public class OliveDecorator extends ToppingDecorator {
     @Override
     public void prepare() {
         pizza.prepare();
-        System.out.println("  → Adding " + oliveType + " olives (+$1.00)");
+        System.out.println("   Adding " + oliveType + " olives (+$1.00)");
     }
 }
