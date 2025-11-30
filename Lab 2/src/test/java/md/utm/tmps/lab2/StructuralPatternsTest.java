@@ -8,7 +8,6 @@ import md.utm.tmps.lab2.domain.payment.adapters.*;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -102,59 +101,62 @@ public class StructuralPatternsTest {
     }
     
     @Test
-    @DisplayName("Facade Pattern - Order Creation")
-    public void testFacadeOrderCreation() {
+    @DisplayName("Facade Pattern - Place Order (Simplified Interface)")
+    public void testFacadePlaceOrder() {
         OrderManagementFacade facade = new OrderManagementFacade();
-        Order order = facade.createOrder();
         
+        PizzaComponent pizza = new BasePizza("Medium", "Thin");
+        pizza = new CheeseDecorator(pizza, "Mozzarella");
+        
+        int orderId = facade.placeOrder(pizza, "customer@test.com");
+        
+        assertTrue(orderId >= 1000);
+        Order order = facade.getOrderStatus(orderId);
         assertNotNull(order);
-        assertTrue(order.getOrderId() >= 1000);
-        assertEquals(Order.OrderStatus.PENDING, order.getStatus());
+        assertEquals(Order.OrderStatus.READY, order.getStatus());
     }
     
     @Test
-    @DisplayName("Facade Pattern - Add Pizza to Order")
-    public void testFacadeAddPizza() {
+    @DisplayName("Facade Pattern - Complete Payment (Simplified Interface)")
+    public void testFacadeCompletePayment() {
         OrderManagementFacade facade = new OrderManagementFacade();
-        Order order = facade.createOrder();
         
         PizzaComponent pizza = new BasePizza("Large", "Thin");
         pizza = new CheeseDecorator(pizza, "Mozzarella");
         
-        facade.addPizzaToOrder(order.getOrderId(), pizza);
+        int orderId = facade.placeOrder(pizza, "customer@test.com");
         
-        Order retrievedOrder = facade.getOrder(order.getOrderId());
-        assertEquals(1, retrievedOrder.getPizzas().size());
-        assertEquals(14.49, retrievedOrder.getTotalAmount(), 0.01);
+        PaymentProcessor payment = new PayPalAdapter();
+        boolean success = facade.completePayment(orderId, payment, "customer@test.com");
+        
+        assertTrue(success);
+        Order order = facade.getOrderStatus(orderId);
+        assertEquals(Order.OrderStatus.COMPLETED, order.getStatus());
     }
     
     @Test
-    @DisplayName("Facade Pattern - Complete Order Workflow")
+    @DisplayName("Facade Pattern - Complete Order Workflow (Simplified)")
     public void testFacadeCompleteWorkflow() {
         OrderManagementFacade facade = new OrderManagementFacade();
         
-        // Create order
-        Order order = facade.createOrder();
-        int orderId = order.getOrderId();
-        
-        // Add pizza
+        // Build pizza with Decorator
         PizzaComponent pizza = new BasePizza("Medium", "Regular");
         pizza = new CheeseDecorator(pizza, "Mozzarella");
         pizza = new PepperoniDecorator(pizza);
-        facade.addPizzaToOrder(orderId, pizza);
         
-        // Process order
-        facade.processOrder(orderId, "test@email.com");
-        Order processedOrder = facade.getOrder(orderId);
-        assertEquals(Order.OrderStatus.READY, processedOrder.getStatus());
+        // Place order - ONE method call handles everything
+        int orderId = facade.placeOrder(pizza, "test@email.com");
         
-        // Complete payment
+        // Verify order is ready
+        Order order = facade.getOrderStatus(orderId);
+        assertEquals(Order.OrderStatus.READY, order.getStatus());
+        
+        // Complete payment - ONE method call handles everything
         PaymentProcessor payment = new PayPalAdapter();
-        boolean paymentSuccess = facade.completePayment(orderId, payment, 
-                                                       "test@email.com", "test@email.com");
+        boolean paymentSuccess = facade.completePayment(orderId, payment, "test@email.com");
         
         assertTrue(paymentSuccess);
-        Order completedOrder = facade.getOrder(orderId);
+        Order completedOrder = facade.getOrderStatus(orderId);
         assertEquals(Order.OrderStatus.COMPLETED, completedOrder.getStatus());
     }
     
@@ -163,32 +165,25 @@ public class StructuralPatternsTest {
     public void testAllPatternsTogether() {
         OrderManagementFacade facade = new OrderManagementFacade();
         
-        // Create order (Facade + Singleton)
-        Order order = facade.createOrder();
-        
-        // Build custom pizza (Decorator)
+        // Build custom pizza (Decorator Pattern)
         PizzaComponent pizza = new BasePizza("Large", "Thick");
         pizza = new CheeseDecorator(pizza, "Cheddar");
         pizza = new PepperoniDecorator(pizza);
         pizza = new BaconDecorator(pizza);
         
-        // Add to order (Facade)
-        facade.addPizzaToOrder(order.getOrderId(), pizza);
+        // Place order (Facade Pattern - coordinates OrderIdGenerator, InventoryManager, KitchenService, NotificationService)
+        int orderId = facade.placeOrder(pizza, "customer@test.com");
         
-        // Process order (Facade)
-        facade.processOrder(order.getOrderId(), "customer@test.com");
-        
-        // Pay with Stripe (Adapter + Facade)
+        // Pay with Stripe (Adapter Pattern + Facade Pattern)
         PaymentProcessor stripePayment = new StripeAdapter();
-        boolean success = facade.completePayment(order.getOrderId(), stripePayment,
-                                                "tok_visa_4242424242424242", "customer@test.com");
+        boolean success = facade.completePayment(orderId, stripePayment, "tok_visa_4242424242424242");
         
         assertTrue(success);
         
-        Order finalOrder = facade.getOrder(order.getOrderId());
+        Order finalOrder = facade.getOrderStatus(orderId);
         assertEquals(Order.OrderStatus.COMPLETED, finalOrder.getStatus());
         
-        // Verify cost calculation
+        // Verify cost calculation from Decorator
         double expectedCost = 12.99 + 1.50 + 2.00 + 2.50; // Base + Cheese + Pepperoni + Bacon
         assertEquals(expectedCost, finalOrder.getTotalAmount(), 0.01);
     }

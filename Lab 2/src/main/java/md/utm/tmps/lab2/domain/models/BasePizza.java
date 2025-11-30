@@ -37,8 +37,8 @@ public class BasePizza implements PizzaComponent {
     
     @Override
     public void prepare() {
-        System.out.println("  → Preparing " + crustType + " crust");
-        System.out.println("  → Baking " + size + " size pizza");
+        System.out.println("   Preparing " + crustType + " crust");
+        System.out.println("   Baking " + size + " size pizza");
     }
     
     public String getSize() {

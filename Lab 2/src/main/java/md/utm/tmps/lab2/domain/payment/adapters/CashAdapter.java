@@ -22,7 +22,7 @@ public class CashAdapter implements PaymentProcessor {
             double cashReceived = Double.parseDouble(accountInfo);
             return cashRegister.acceptCash(amount, cashReceived);
         } catch (NumberFormatException e) {
-            System.out.println("  → Cash Adapter: Invalid cash amount format");
+            System.out.println("   Cash Adapter: Invalid cash amount format");
             return false;
         }
     }

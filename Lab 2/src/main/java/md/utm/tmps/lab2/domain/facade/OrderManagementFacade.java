@@ -10,20 +10,24 @@ import md.utm.tmps.lab2.domain.subsystems.*;
  * Provides a unified, simplified interface to a complex subsystem.
  * It defines a higher-level interface that makes the subsystem easier to use.
  * 
- * USE CASE: OrderManagementFacade simplifies the complex process of creating,
- * processing, and completing orders by coordinating multiple subsystems:
+ * SINGLE RESPONSIBILITY: This facade has ONE responsibility - to provide
+ * a simplified interface for the complete order workflow. It hides the
+ * complexity of coordinating multiple subsystems behind simple, intuitive methods.
+ * 
+ * USE CASE: OrderManagementFacade simplifies the complex process by coordinating:
  * - OrderIdGenerator (ID generation)
  * - InventoryManager (order tracking)
  * - KitchenService (food preparation)
  * - NotificationService (customer communication)
- * - PaymentProcessor (payment handling)
  * 
- * Without the facade, clients would need to interact with all these subsystems
- * directly, understand their interdependencies, and manage the correct sequence
- * of operations.
+ * Without the facade, clients would need to:
+ * 1. Know about all subsystems and their APIs
+ * 2. Understand the correct sequence of operations
+ * 3. Handle coordination and error checking manually
+ * 4. Manage state transitions across multiple objects
  */
 public class OrderManagementFacade {
-    // Subsystems
+    // Subsystems - encapsulated and hidden from client
     private final OrderIdGenerator idGenerator;
     private final InventoryManager inventoryManager;
     private final KitchenService kitchenService;
@@ -37,97 +41,74 @@ public class OrderManagementFacade {
     }
     
     /**
-     * Simplified method to create a new order
-     * Internally coordinates ID generation and inventory registration
+     * HIGH-LEVEL OPERATION: Place a complete order from start to finish
      * 
-     * @return newly created Order object
+     * This single method encapsulates the entire ordering workflow:
+     * 1. Create order with unique ID
+     * 2. Add pizza to order
+     * 3. Send order to kitchen for preparation
+     * 4. Notify customer
+     * 5. Track status through completion
+     * 
+     * Client doesn't need to know about any subsystems!
+     * 
+     * @param pizza the pizza to order
+     * @param customerContact customer's contact information
+     * @return the order ID for payment
      */
-    public Order createOrder() {
+    public int placeOrder(PizzaComponent pizza, String customerContact) {
         System.out.println("\n╔════════════════════════════════════════════════════════════╗");
-        System.out.println("║ Creating New Order                                         ║");
+        System.out.println("║ Placing New Order                                          ║");
         System.out.println("╚════════════════════════════════════════════════════════════╝");
         
+        // Step 1: Create order (coordinates ID generation and inventory)
         int orderId = idGenerator.generateOrderId();
         Order order = new Order(orderId);
         inventoryManager.registerOrder(order);
         
-        System.out.println("✓ Order #" + orderId + " created successfully\n");
-        return order;
-    }
-    
-    /**
-     * Simplified method to add a pizza to an order
-     * Internally manages order lookup and total calculation
-     * 
-     * @param orderId the order to add to
-     * @param pizza the pizza to add
-     */
-    public void addPizzaToOrder(int orderId, PizzaComponent pizza) {
-        Order order = inventoryManager.getOrder(orderId);
-        if (order != null) {
-            order.addPizza(pizza);
-            System.out.println("✓ Pizza added to Order #" + orderId);
-        } else {
-            System.out.println("✗ Order #" + orderId + " not found");
-        }
-    }
-    
-    /**
-     * Simplified method to process an order through the kitchen
-     * Coordinates kitchen service and inventory status updates
-     * 
-     * @param orderId the order to process
-     * @param customerContact customer's contact for notifications
-     */
-    public void processOrder(int orderId, String customerContact) {
-        System.out.println("\n╔════════════════════════════════════════════════════════════╗");
-        System.out.println("║ Processing Order #" + String.format("%-5d", orderId) + "                                    ║");
-        System.out.println("╚════════════════════════════════════════════════════════════╝");
+        // Step 2: Add pizza to order
+        order.addPizza(pizza);
+        System.out.println(" Pizza added to order");
         
-        Order order = inventoryManager.getOrder(orderId);
-        if (order == null) {
-            System.out.println("✗ Order not found");
-            return;
-        }
-        
-        // Update status to preparing
+        // Step 3: Send to kitchen for preparation
         inventoryManager.updateOrderStatus(orderId, Order.OrderStatus.PREPARING);
-        
-        // Send confirmation
         notificationService.sendOrderConfirmation(orderId, customerContact);
         
-        // Prepare in kitchen
         kitchenService.prepareOrder(orderId);
-        for (PizzaComponent pizza : order.getPizzas()) {
-            kitchenService.preparePizza(pizza);
-        }
+        kitchenService.preparePizza(pizza);
         
-        // Update status to ready
+        // Step 4: Mark as ready
         inventoryManager.updateOrderStatus(orderId, Order.OrderStatus.READY);
         kitchenService.completeOrder(orderId);
-        
-        // Notify customer
         notificationService.sendOrderReady(orderId, customerContact);
         
-        System.out.println("\n✓ Order #" + orderId + " is ready for payment and pickup\n");
+        System.out.println("\n Order #" + orderId + " is ready for payment\n");
+        return orderId;
     }
     
     /**
-     * Simplified method to complete payment for an order
-     * Coordinates payment processing, status updates, and notifications
+     * HIGH-LEVEL OPERATION: Complete payment and finalize order
+     * 
+     * This single method encapsulates the entire payment workflow:
+     * 1. Validate order exists and is ready
+     * 2. Validate payment details
+     * 3. Process payment through payment processor
+     * 4. Update order status
+     * 5. Send confirmation to customer
+     * 
+     * Client doesn't need to coordinate subsystems manually!
      * 
      * @param orderId the order to pay for
      * @param paymentProcessor the payment method to use
-     * @param paymentInfo payment information (email, token, or cash amount)
-     * @param customerContact customer's contact for receipt
+     * @param paymentInfo payment information (email, token, or cash)
      * @return true if payment successful, false otherwise
      */
-    public boolean completePayment(int orderId, PaymentProcessor paymentProcessor, 
-                                   String paymentInfo, String customerContact) {
+    public boolean completePayment(int orderId, PaymentProcessor paymentProcessor, String paymentInfo) {
         System.out.println("\n╔════════════════════════════════════════════════════════════╗");
         System.out.println("║ Processing Payment for Order #" + String.format("%-5d", orderId) + "                   ║");
         System.out.println("╚════════════════════════════════════════════════════════════╝");
         
+        // Step 1: Validate order
         Order order = inventoryManager.getOrder(orderId);
         if (order == null) {
             System.out.println("✗ Order not found");
@@ -139,24 +120,24 @@ public class OrderManagementFacade {
             return false;
         }
         
-        // Validate payment details
+        // Step 2: Validate payment details
         if (!paymentProcessor.validatePaymentDetails(paymentInfo)) {
             System.out.println("✗ Invalid payment details");
             return false;
         }
         
-        // Process payment
+        // Step 3: Process payment
         System.out.println("Processing payment via " + paymentProcessor.getPaymentMethod() + "...");
         boolean paymentSuccess = paymentProcessor.processPayment(order.getTotalAmount(), paymentInfo);
         
+        // Step 4: Update status and notify
         if (paymentSuccess) {
             inventoryManager.updateOrderStatus(orderId, Order.OrderStatus.PAID);
             inventoryManager.updateOrderStatus(orderId, Order.OrderStatus.COMPLETED);
-            
             notificationService.sendPaymentConfirmation(orderId, order.getTotalAmount(), 
                                                        paymentProcessor.getPaymentMethod());
             
-            System.out.println("\n✓ Payment successful! Order #" + orderId + " completed\n");
+            System.out.println("\n Payment successful! Order #" + orderId + " completed\n");
             return true;
         } else {
             System.out.println("\n✗ Payment failed\n");
@@ -165,35 +146,13 @@ public class OrderManagementFacade {
     }
     
     /**
-     * Simplified method to get order details
+     * SIMPLIFIED QUERY: Get order summary
+     * Provides a simple way to check order status without knowing about InventoryManager
      * 
      * @param orderId the order to retrieve
      * @return Order object or null if not found
      */
-    public Order getOrder(int orderId) {
+    public Order getOrderStatus(int orderId) {
         return inventoryManager.getOrder(orderId);
-    }
-    
-    /**
-     * Display order summary
-     * 
-     * @param orderId the order to display
-     */
-    public void displayOrder(int orderId) {
-        Order order = inventoryManager.getOrder(orderId);
-        if (order != null) {
-            System.out.println(order);
-        } else {
-            System.out.println("Order #" + orderId + " not found");
-        }
-    }
-    
-    /**
-     * Get statistics
-     * 
-     * @return total number of orders
-     */
-    public int getTotalOrdersProcessed() {
-        return inventoryManager.getTotalOrders();
     }
 }

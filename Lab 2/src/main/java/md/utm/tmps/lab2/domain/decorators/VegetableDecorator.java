@@ -27,6 +27,6 @@ public class VegetableDecorator extends ToppingDecorator {
     @Override
     public void prepare() {
         pizza.prepare();
-        System.out.println("  → Adding " + vegetableType + " (+$0.75)");
+        System.out.println("   Adding " + vegetableType + " (+$0.75)");
     }
 }

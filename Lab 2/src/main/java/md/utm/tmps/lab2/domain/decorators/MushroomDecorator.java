@@ -25,6 +25,6 @@ public class MushroomDecorator extends ToppingDecorator {
     @Override
     public void prepare() {
         pizza.prepare();
-        System.out.println("  → Adding fresh mushrooms (+$1.25)");
+        System.out.println("   Adding fresh mushrooms (+$1.25)");
     }
 }

@@ -17,7 +17,7 @@ public class InventoryManager {
     
     public void registerOrder(Order order) {
         orders.put(order.getOrderId(), order);
-        System.out.println("  → Inventory: Order #" + order.getOrderId() + " registered");
+        System.out.println("   Inventory: Order #" + order.getOrderId() + " registered");
     }
     
     public Order getOrder(int orderId) {
@@ -32,7 +32,7 @@ public class InventoryManager {
         Order order = orders.get(orderId);
         if (order != null) {
             order.setStatus(status);
-            System.out.println("  → Inventory: Order #" + orderId + " status updated to " + status);
+            System.out.println("   Inventory: Order #" + orderId + " status updated to " + status);
         }
     }
     

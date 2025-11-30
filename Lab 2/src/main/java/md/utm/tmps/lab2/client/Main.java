@@ -103,11 +103,11 @@ public class Main {
         System.out.println("\nPreparation steps:");
         vegSupreme.prepare();
         
-        System.out.println("\n✓ DECORATOR PATTERN BENEFITS:");
-        System.out.println("  • Add toppings dynamically without modifying base class");
-        System.out.println("  • Flexible combinations - any number of decorators");
-        System.out.println("  • Each decorator adds its own cost and behavior");
-        System.out.println("  • Open/Closed Principle: Open for extension, closed for modification");
+        System.out.println("\n  DECORATOR PATTERN BENEFITS:");
+        System.out.println("   Add toppings dynamically without modifying base class");
+        System.out.println("  - Flexible combinations - any number of decorators");
+        System.out.println("  - Each decorator adds its own cost and behavior");
+        System.out.println("  - Open/Closed Principle: Open for extension, closed for modification");
     }
     
     private static void demonstrateAdapterPattern() {
@@ -129,9 +129,9 @@ public class Main {
         System.out.println("Validating email: customer@example.com");
         
         if (paypalProcessor.validatePaymentDetails("customer@example.com")) {
-            System.out.println("✓ Validation successful\n");
+            System.out.println(" Validation successful\n");
             paypalProcessor.processPayment(testAmount, "customer@example.com");
-            System.out.println("✓ Payment completed successfully");
+            System.out.println(" Payment completed successfully");
         }
         
         // Example 2: Stripe Adapter
@@ -144,9 +144,9 @@ public class Main {
         System.out.println("Validating card token: tok_visa_4242424242424242");
         
         if (stripeProcessor.validatePaymentDetails("tok_visa_4242424242424242")) {
-            System.out.println("✓ Validation successful\n");
+            System.out.println(" Validation successful\n");
             stripeProcessor.processPayment(testAmount, "tok_visa_4242424242424242");
-            System.out.println("✓ Payment completed successfully");
+            System.out.println(" Payment completed successfully");
         }
         
         // Example 3: Cash Adapter
@@ -159,16 +159,16 @@ public class Main {
         System.out.println("Validating cash amount: $50.00");
         
         if (cashProcessor.validatePaymentDetails("50.00")) {
-            System.out.println("✓ Validation successful\n");
+            System.out.println(" Validation successful\n");
             cashProcessor.processPayment(testAmount, "50.00");
-            System.out.println("✓ Payment completed successfully");
+            System.out.println(" Payment completed successfully");
         }
         
-        System.out.println("\n✓ ADAPTER PATTERN BENEFITS:");
-        System.out.println("  • Integrate third-party systems without modifying their code");
-        System.out.println("  • Uniform interface for different payment methods");
-        System.out.println("  • Easy to add new payment systems (just create new adapter)");
-        System.out.println("  • Decouples client code from specific payment implementations");
+        System.out.println("\n ADAPTER PATTERN BENEFITS:");
+        System.out.println("  - Integrate third-party systems without modifying their code");
+        System.out.println("  - Uniform interface for different payment methods");
+        System.out.println("  - Easy to add new payment systems (just create new adapter)");
+        System.out.println("  - Decouples client code from specific payment implementations");
     }
     
     private static void demonstrateFacadePattern() {
@@ -185,42 +185,51 @@ public class Main {
         System.out.println("  4. NotificationService - Sends customer notifications");
         System.out.println("  5. PaymentProcessor - Processes payments\n");
         
+        System.out.println("WITHOUT FACADE - Client would need to:");
+        System.out.println("  ✗ Know about all 5 subsystems");
+        System.out.println("  ✗ Understand their dependencies");
+        System.out.println("  ✗ Coordinate sequence of operations");
+        System.out.println("  ✗ Handle error checking manually\n");
+        
+        System.out.println("WITH FACADE - Client just calls:");
+        System.out.println("  ✓ placeOrder(pizza, contact)");
+        System.out.println("  ✓ completePayment(orderId, payment, info)\n");
+        
         // Create facade
         OrderManagementFacade orderFacade = new OrderManagementFacade();
         
         // Create and process a simple order
         System.out.println("─────────────────────────────────────────────────────────────");
-        System.out.println("Creating and processing an order through the facade");
+        System.out.println("Placing order with SIMPLIFIED INTERFACE");
         System.out.println("─────────────────────────────────────────────────────────────");
         
-        // Step 1: Create order (coordinates ID generation and inventory)
-        Order order = orderFacade.createOrder();
-        int orderId = order.getOrderId();
-        
-        // Step 2: Add pizza (using decorator pattern)
+        // Build pizza using Decorator pattern
         PizzaComponent pizza = new BasePizza("Medium", "Regular");
         pizza = new CheeseDecorator(pizza, "Mozzarella");
         pizza = new PepperoniDecorator(pizza);
-        orderFacade.addPizzaToOrder(orderId, pizza);
         
-        // Step 3: Display order
-        System.out.println();
-        orderFacade.displayOrder(orderId);
+        System.out.println("\nPizza: " + pizza.getDescription());
+        System.out.println("Cost: $" + String.format("%.2f", pizza.getCost()));
         
-        // Step 4: Process order (coordinates kitchen, inventory, notifications)
-        orderFacade.processOrder(orderId, "customer@email.com");
+        // ONE METHOD CALL handles entire order workflow!
+        int orderId = orderFacade.placeOrder(pizza, "customer@email.com");
         
-        // Step 5: Complete payment (coordinates payment and final notifications)
+        // ONE METHOD CALL handles entire payment workflow!
         PaymentProcessor paymentMethod = new PayPalAdapter();
-        orderFacade.completePayment(orderId, paymentMethod, 
-                                   "customer@email.com", "customer@email.com");
+        boolean success = orderFacade.completePayment(orderId, paymentMethod, "customer@email.com");
+        
+        if (success) {
+            Order order = orderFacade.getOrderStatus(orderId);
+            System.out.println("\nFinal Order Status: " + order.getStatus());
+            System.out.println("Total Paid: $" + String.format("%.2f", order.getTotalAmount()));
+        }
         
         System.out.println("\n✓ FACADE PATTERN BENEFITS:");
-        System.out.println("  • Simplifies complex subsystem interactions");
-        System.out.println("  • Single point of entry for order management");
-        System.out.println("  • Hides complexity from client code");
-        System.out.println("  • Client only needs to know about the facade");
-        System.out.println("  • Reduces coupling between client and subsystems");
+        System.out.println("  - TWO simple method calls instead of 15+ subsystem calls");
+        System.out.println("  - Client doesn't need to know about subsystems");
+        System.out.println("  - Hides complexity of coordination and sequencing");
+        System.out.println("  - Single Responsibility: Facade provides simplified workflow");
+        System.out.println("  - Loose coupling between client and subsystems");
     }
     
     private static void demonstrateCompleteScenario() {
@@ -230,60 +239,59 @@ public class Main {
         
         OrderManagementFacade facade = new OrderManagementFacade();
         
-        // Scenario: Customer orders multiple pizzas with different toppings
-        // and pays with Stripe
+        // Scenario: Customer orders a custom pizza and pays with Stripe
         
-        System.out.println("Scenario: Customer places order with 3 different pizzas\n");
+        System.out.println("Scenario: Customer places custom pizza order\n");
         
-        // Create order using Facade
-        Order order = facade.createOrder();
-        int orderId = order.getOrderId();
+        // Build a complex pizza using Decorator pattern
+        System.out.println("Building Supreme Pizza with multiple toppings:");
+        PizzaComponent supremePizza = new BasePizza("Large", "Thick");
+        supremePizza = new CheeseDecorator(supremePizza, "Mozzarella");
+        supremePizza = new PepperoniDecorator(supremePizza);
+        supremePizza = new MushroomDecorator(supremePizza);
+        supremePizza = new OliveDecorator(supremePizza, "Black");
+        supremePizza = new BaconDecorator(supremePizza);
         
-        // Pizza 1: Classic Pepperoni (using Decorator)
-        System.out.println("Adding Pizza 1: Classic Pepperoni");
-        PizzaComponent pizza1 = new BasePizza("Large", "Thin");
-        pizza1 = new CheeseDecorator(pizza1, "Mozzarella");
-        pizza1 = new PepperoniDecorator(pizza1);
-        facade.addPizzaToOrder(orderId, pizza1);
+        System.out.println("  " + supremePizza.getDescription());
+        System.out.println("  Cost: $" + String.format("%.2f", supremePizza.getCost()));
         
-        // Pizza 2: Vegetarian Deluxe (using Decorator)
-        System.out.println("Adding Pizza 2: Vegetarian Deluxe");
-        PizzaComponent pizza2 = new BasePizza("Medium", "Whole Wheat");
-        pizza2 = new CheeseDecorator(pizza2, "Feta");
-        pizza2 = new MushroomDecorator(pizza2);
-        pizza2 = new OliveDecorator(pizza2, "Kalamata");
-        pizza2 = new VegetableDecorator(pizza2, "Spinach");
-        facade.addPizzaToOrder(orderId, pizza2);
+        // Use Facade to place order (ONE simple call!)
+        System.out.println("\n─────────────────────────────────────────────────────────────");
+        System.out.println("Step 1: Place Order (Facade coordinates all subsystems)");
+        System.out.println("─────────────────────────────────────────────────────────────");
+        int orderId = facade.placeOrder(supremePizza, "john.doe@email.com");
         
-        // Pizza 3: Meat Feast (using Decorator)
-        System.out.println("Adding Pizza 3: Meat Feast");
-        PizzaComponent pizza3 = new BasePizza("Large", "Thick");
-        pizza3 = new CheeseDecorator(pizza3, "Cheddar");
-        pizza3 = new PepperoniDecorator(pizza3);
-        pizza3 = new BaconDecorator(pizza3);
-        facade.addPizzaToOrder(orderId, pizza3);
+        // Check order status
+        Order order = facade.getOrderStatus(orderId);
+        System.out.println("\nOrder Status: " + order.getStatus());
+        System.out.println("Order Total: $" + String.format("%.2f", order.getTotalAmount()));
         
-        // Display complete order
-        System.out.println();
-        facade.displayOrder(orderId);
-        
-        // Process order using Facade
-        facade.processOrder(orderId, "john.doe@email.com");
-        
-        // Payment using Adapter pattern through Facade
+        // Use Adapter for payment processing through Facade (ONE simple call!)
+        System.out.println("\n─────────────────────────────────────────────────────────────");
+        System.out.println("Step 2: Complete Payment (Adapter provides unified interface)");
+        System.out.println("─────────────────────────────────────────────────────────────");
         PaymentProcessor stripePayment = new StripeAdapter();
-        facade.completePayment(orderId, stripePayment, 
-                             "tok_mastercard_5555555555554444", "john.doe@email.com");
+        boolean success = facade.completePayment(orderId, stripePayment, 
+                                                "tok_mastercard_5555555555554444");
         
-        // Final order display
-        System.out.println("\nFinal Order Status:");
-        facade.displayOrder(orderId);
+        // Final status
+        if (success) {
+            order = facade.getOrderStatus(orderId);
+            System.out.println("\n╔════════════════════════════════════════════════════════════╗");
+            System.out.println("║ Order Successfully Completed                               ║");
+            System.out.println("╚════════════════════════════════════════════════════════════╝");
+            System.out.println("  Order ID: " + orderId);
+            System.out.println("  Status: " + order.getStatus());
+            System.out.println("  Total: $" + String.format("%.2f", order.getTotalAmount()));
+            System.out.println("  Payment: " + stripePayment.getPaymentMethod());
+        }
         
         System.out.println("\n✓ COMPLETE INTEGRATION SUCCESS:");
-        System.out.println("  • DECORATOR: Built 3 custom pizzas with dynamic toppings");
-        System.out.println("  • FACADE: Managed order lifecycle through simple interface");
-        System.out.println("  • ADAPTER: Processed payment through Stripe adapter");
-        System.out.println("  • All patterns work seamlessly together!");
+        System.out.println("  - DECORATOR: Built custom pizza with 5 dynamic toppings");
+        System.out.println("  - FACADE: Placed order with ONE method call (hides 10+ subsystem calls)");
+        System.out.println("  - ADAPTER: Processed payment through Stripe with unified interface");
+        System.out.println("  - All patterns work seamlessly together!");
+        System.out.println("  - Client code remains simple and clean!");
     }
     
     private static void printFooter() {
@@ -292,15 +300,15 @@ public class Main {
         System.out.println("║  DEMONSTRATION COMPLETE                                    ║");
         System.out.println("║                                                            ║");
         System.out.println("║  Structural Patterns Demonstrated:                        ║");
-        System.out.println("║    ✓ Decorator - Dynamic object enhancement               ║");
-        System.out.println("║    ✓ Adapter - Interface compatibility                    ║");
-        System.out.println("║    ✓ Facade - Simplified subsystem access                 ║");
+        System.out.println("║     Decorator - Dynamic object enhancement               ║");
+        System.out.println("║     Adapter - Interface compatibility                    ║");
+        System.out.println("║     Facade - Simplified subsystem access                 ║");
         System.out.println("║                                                            ║");
         System.out.println("║  Key Benefits:                                            ║");
-        System.out.println("║    • Flexible object composition                          ║");
-        System.out.println("║    • Easy third-party integration                         ║");
-        System.out.println("║    • Reduced system complexity                            ║");
-        System.out.println("║    • Improved maintainability                             ║");
+        System.out.println("║    - Flexible object composition                          ║");
+        System.out.println("║    - Easy third-party integration                         ║");
+        System.out.println("║    - Reduced system complexity                            ║");
+        System.out.println("║    - Improved maintainability                             ║");
         System.out.println("║                                                            ║");
         System.out.println("╚════════════════════════════════════════════════════════════╝\n");
     }

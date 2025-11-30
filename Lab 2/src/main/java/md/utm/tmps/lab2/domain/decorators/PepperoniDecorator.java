@@ -25,6 +25,6 @@ public class PepperoniDecorator extends ToppingDecorator {
     @Override
     public void prepare() {
         pizza.prepare();
-        System.out.println("  → Adding pepperoni slices (+$2.00)");
+        System.out.println("   Adding pepperoni slices (+$2.00)");
     }
 }

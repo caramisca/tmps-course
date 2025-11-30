@@ -8,16 +8,16 @@ import md.utm.tmps.lab2.domain.models.PizzaComponent;
 public class KitchenService {
     
     public void preparePizza(PizzaComponent pizza) {
-        System.out.println("  → Kitchen: Starting pizza preparation");
+        System.out.println("   Kitchen: Starting pizza preparation");
         pizza.prepare();
-        System.out.println("  → Kitchen: Pizza ready!");
+        System.out.println("   Kitchen: Pizza ready!");
     }
     
     public void prepareOrder(int orderId) {
-        System.out.println("  → Kitchen: Starting preparation for Order #" + orderId);
+        System.out.println("   Kitchen: Starting preparation for Order #" + orderId);
     }
     
     public void completeOrder(int orderId) {
-        System.out.println("  → Kitchen: Order #" + orderId + " completed and ready for pickup");
+        System.out.println("   Kitchen: Order #" + orderId + " completed and ready for pickup");
     }
 }

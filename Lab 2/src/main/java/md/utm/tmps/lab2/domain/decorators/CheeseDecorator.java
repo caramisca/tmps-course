@@ -27,6 +27,6 @@ public class CheeseDecorator extends ToppingDecorator {
     @Override
     public void prepare() {
         pizza.prepare();
-        System.out.println("  → Adding " + cheeseType + " cheese (+$1.50)");
+        System.out.println("   Adding " + cheeseType + " cheese (+$1.50)");
     }
 }
